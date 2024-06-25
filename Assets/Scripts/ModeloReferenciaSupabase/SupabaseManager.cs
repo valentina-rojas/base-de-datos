@@ -16,8 +16,8 @@ public class SupabaseManager : MonoBehaviour
     [SerializeField] TMP_InputField _userPassInput;
     [SerializeField] TextMeshProUGUI _stateText;
 
-    string supabaseUrl = "url"; //COMPLETAR
-    string supabaseKey = "key"; //COMPLETAR
+ string supabaseUrl = "https://qyewiiivujjprrkornqr.supabase.co"; //COMPLETAR
+    string supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5ZXdpaWl2dWpqcHJya29ybnFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTkwODkwODksImV4cCI6MjAzNDY2NTA4OX0.w28iWvwPbRAcDA7KoNsl4qISpwg3JJSBS71OxdlxNq8"; //COMPLETAR
 
     Supabase.Client clientSupabase;
 
@@ -38,7 +38,7 @@ public class SupabaseManager : MonoBehaviour
 
 
 
-        // filtro según datos de login
+        // filtro segï¿½n datos de login
         var login_password = await clientSupabase
           .From<usuarios>()
           .Select("password")
@@ -66,18 +66,18 @@ public class SupabaseManager : MonoBehaviour
         // Initialize the Supabase client
         clientSupabase = new Supabase.Client(supabaseUrl, supabaseKey);
 
-        // Consultar el último id utilizado (ID = index)
+        // Consultar el ï¿½ltimo id utilizado (ID = index)
         var ultimoId = await clientSupabase
             .From<usuarios>()
             .Select("id")
-            .Order(usuarios => usuarios.id, Postgrest.Constants.Ordering.Descending) // Ordenar en orden descendente para obtener el último id
+            .Order(usuarios => usuarios.id, Postgrest.Constants.Ordering.Descending) // Ordenar en orden descendente para obtener el ï¿½ltimo id
             .Get();
 
-        int nuevoId = 1; // Valor predeterminado si la tabla está vacía
+        int nuevoId = 1; // Valor predeterminado si la tabla estï¿½ vacï¿½a
 
         if (ultimoId != null)
         {
-            nuevoId = ultimoId.Model.id + 1; // Incrementar el último id
+            nuevoId = ultimoId.Model.id + 1; // Incrementar el ï¿½ltimo id
         }
 
         // Crear el nuevo usuario con el nuevo id
@@ -97,7 +97,7 @@ public class SupabaseManager : MonoBehaviour
             .Insert(new[] { nuevoUsuario });
 
 
-        //verifico el estado de la inserción 
+        //verifico el estado de la inserciï¿½n 
         if (resultado.ResponseMessage.IsSuccessStatusCode)
         {
             _stateText.text = "Usuario Correctamente Ingresado";
