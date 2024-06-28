@@ -14,12 +14,16 @@ public class UIManagment : MonoBehaviour
     public TextMeshProUGUI _timerText;
     public TextMeshProUGUI _pointsText;
 
+    [SerializeField] GameObject _resultsPanel; // El panel de resultados
+    public TextMeshProUGUI _scoreText;
+
     string _correctAnswer;
 
     public Button[] _buttons = new Button[3];
 
     [SerializeField] Button _backButton;
     [SerializeField] Button _nextButton;
+       [SerializeField] Button _backMenuButton;
 
     private List<string> _answers = new List<string>();
 
@@ -53,8 +57,10 @@ public class UIManagment : MonoBehaviour
         _timerActive = true;
         _originalButtonColor = _buttons[0].GetComponent<Image>().color;
         _nextButton.gameObject.SetActive(false); // Ocultar el botón "Siguiente" inicialmente
-                                                 // Inicializar el texto de puntos al inicio
+                                          
+        int finalScore = GameManager.Instance.GetTotalPoints();
         _pointsText.text = "Puntos: " + GameManager.Instance.GetTotalPoints();
+        _resultsPanel.SetActive(false);
 
     }
 
@@ -124,7 +130,7 @@ public class UIManagment : MonoBehaviour
             RespuestaCorrecta();
 
             ChangeButtonColor(buttonIndex, Color.green);
-            Invoke("RestoreButtonColor", 2f);
+            // Invoke("RestoreButtonColor", 2f);
             GameManager.Instance._answers.Clear();
             // Invoke("NextAnswer", 2f);
 
@@ -134,7 +140,7 @@ public class UIManagment : MonoBehaviour
             Debug.Log("Respuesta incorrecta. Int�ntalo de nuevo.");
 
             ChangeButtonColor(buttonIndex, Color.red);
-            Invoke("RestoreButtonColor", 2f);
+            // Invoke("RestoreButtonColor", 2f);
         }
     }
 
@@ -143,8 +149,8 @@ public class UIManagment : MonoBehaviour
     {
         RestoreButtonColor();
         _nextButton.gameObject.SetActive(false); // Ocultar el botón "Siguiente"
-//GameManager.Instance.CategoryAndQuestionQuery(false); // Cargar la siguiente pregunta
-       Invoke("NextAnswer", 0f);
+                                                 //GameManager.Instance.CategoryAndQuestionQuery(false); // Cargar la siguiente pregunta
+        Invoke("NextAnswer", 0f);
         foreach (Button button in _buttons)
         {
             button.interactable = true;
@@ -176,6 +182,8 @@ public class UIManagment : MonoBehaviour
 
     public void PreviousScene()
     {
+        GameManager.Instance.ResetGame();
+
         Destroy(GameManager.Instance);
         Destroy(UIManagment.Instance);
 
@@ -183,29 +191,43 @@ public class UIManagment : MonoBehaviour
     }
 
 
-
-   public void RespuestaCorrecta()
-{
-    // Detener el temporizador si está activo
-    if (_timerActive)
+    public void ResultsScene()
     {
-        GameManager.Instance.answerTime = Mathf.RoundToInt(10 - GameManager.Instance.timer); // Almacenar el tiempo de respuesta
-        _timerActive = false; // Detener el temporizador
+        //Destroy(GameManager.Instance);
 
-        // Calcular los puntos para esta respuesta
-        GameManager.Instance._points = Mathf.RoundToInt(10 - GameManager.Instance.answerTime);
+        //  SceneManager.LoadScene("ResultsScene"); // Cargar la escena de resultados
+        //      Destroy(UIManagment.Instance);
 
-        Debug.Log("¡Respuesta correcta! Puntaje obtenido: " + GameManager.Instance._points);
 
-        // Agregar puntos al total
-        GameManager.Instance.AddPoints(GameManager.Instance._points);
+        // Muestra el panel de resultados
+        _resultsPanel.SetActive(true);
+        // Muestra el puntaje final
 
-        // Actualizar el texto de puntos en la interfaz de usuario
-        _pointsText.text = "Puntos: " + GameManager.Instance.GetTotalPoints();
+        _scoreText.text = "Puntaje final: " + GameManager.Instance.GetTotalPoints();
     }
-    else
+
+    public void RespuestaCorrecta()
     {
-        Debug.LogWarning("RespuestaCorrecta() llamada cuando el temporizador no está activo.");
+        // Detener el temporizador si está activo
+        if (_timerActive)
+        {
+            GameManager.Instance.answerTime = Mathf.RoundToInt(10 - GameManager.Instance.timer); // Almacenar el tiempo de respuesta
+            _timerActive = false; // Detener el temporizador
+
+            // Calcular los puntos para esta respuesta
+            GameManager.Instance._points = Mathf.RoundToInt(10 - GameManager.Instance.answerTime);
+
+            Debug.Log("¡Respuesta correcta! Puntaje obtenido: " + GameManager.Instance._points);
+
+            // Agregar puntos al total
+            GameManager.Instance.AddPoints(GameManager.Instance._points);
+
+            // Actualizar el texto de puntos en la interfaz de usuario
+            _pointsText.text = "Puntos: " + GameManager.Instance.GetTotalPoints();
+        }
+        else
+        {
+            Debug.LogWarning("RespuestaCorrecta() llamada cuando el temporizador no está activo.");
+        }
     }
-}
 }

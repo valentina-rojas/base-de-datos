@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -60,7 +61,7 @@ public class GameManager : MonoBehaviour
 
         queryCalled = false;
         timer = initialTimerValue;
-        _points = 0; 
+        _points = 0;
         _isAnswered = false;
     }
 
@@ -71,7 +72,7 @@ public class GameManager : MonoBehaviour
         //print(responseList.Count);
     }
 
-  public void AddPoints(int pointsToAdd)
+    public void AddPoints(int pointsToAdd)
     {
         _totalPoints += pointsToAdd; // sumar puntos al total
     }
@@ -88,7 +89,8 @@ public class GameManager : MonoBehaviour
         if (!isCalled)
         {
 
-           //si se han mostrado todas las preguntas, reiniciar el registro de índices
+            _answers.Clear();
+            //si se han mostrado todas las preguntas, reiniciar el registro de índices
             if (usedQuestionIndices.Count >= responseList.Count)
             {
                 usedQuestionIndices.Clear();
@@ -102,7 +104,7 @@ public class GameManager : MonoBehaviour
 
             //agregar el índice a la lista de utilizados
             usedQuestionIndices.Add(randomQuestionIndex);
- 
+
             //_questionText.text = GameManager.Instance.responseList[randomQuestionIndex].QuestionText;
             _correctAnswer = GameManager.Instance.responseList[randomQuestionIndex].CorrectOption;
 
@@ -129,15 +131,15 @@ public class GameManager : MonoBehaviour
             UIManagment.Instance.queryCalled = true;
 
 
-      // ajustar variable para la proxima pregunta
+            // ajustar variable para la proxima pregunta
             timer = initialTimerValue;
             UIManagment.Instance._timerActive = true;
             _points = 0;
             answerTime = 0;
             _numQuestionAnswered++;
 
-    //chequear si ya se mostraron todas las preguntas disponibles
-           if (_numQuestionAnswered >=  TotalQuestions +1)
+            //chequear si ya se mostraron todas las preguntas disponibles
+            if (_numQuestionAnswered >= TotalQuestions + 1)
             {
                 Debug.Log("¡Has respondido todas las preguntas!");
                 EndGame();
@@ -146,18 +148,17 @@ public class GameManager : MonoBehaviour
 
     }
 
-
- public void EndGame()
+    public void EndGame()
     {
         Debug.Log("Juego terminado. Puntos totales: " + _totalPoints);
+        //  SceneManager.LoadScene("ResultsScene"); // Cargar la escena de resultados
+        UIManagment.Instance.ResultsScene();
+    }
 
-        // Reiniciar variables si es necesario para un nuevo juego
+    public void ResetGame()
+    {
         _numQuestionAnswered = 0;
         _totalPoints = 0;
-
-        // Aquí puedes manejar la transición a la pantalla de resultados o a otra escena
-        // Por ejemplo:
-       UIManagment.Instance.PreviousScene();
     }
 }
 
