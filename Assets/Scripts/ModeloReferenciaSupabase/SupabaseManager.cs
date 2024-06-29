@@ -6,28 +6,40 @@ using Postgrest.Models;
 using TMPro;
 using UnityEngine.UI;
 using System.Threading.Tasks;
+using UnityEngine.SceneManagement;
 
 public class SupabaseManager : MonoBehaviour
-
 {
-
     [Header("Campos de Interfaz")]
     [SerializeField] TMP_InputField _userIDInput;
     [SerializeField] TMP_InputField _userPassInput;
     [SerializeField] TextMeshProUGUI _stateText;
 
- string supabaseUrl = "https://qyewiiivujjprrkornqr.supabase.co"; //COMPLETAR
-    string supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5ZXdpaWl2dWpqcHJya29ybnFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTkwODkwODksImV4cCI6MjAzNDY2NTA4OX0.w28iWvwPbRAcDA7KoNsl4qISpwg3JJSBS71OxdlxNq8"; //COMPLETAR
+    [Header("Panel de Éxito")]
+    [SerializeField] GameObject successPanel;
+    [SerializeField] Button playButton;
+
+    string supabaseUrl = "https://qyewiiivujjprrkornqr.supabase.co"; // COMPLETAR
+    string supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5ZXdpaWl2dWpqcHJya29ybnFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTkwODkwODksImV4cCI6MjAzNDY2NTA4OX0.w28iWvwPbRAcDA7KoNsl4qISpwg3JJSBS71OxdlxNq8"; // COMPLETAR
 
     Supabase.Client clientSupabase;
 
     private usuarios _usuarios = new usuarios();
 
+    private void Start()
+    {
+        // Initialize the Supabase client once at the start
+        clientSupabase = new Supabase.Client(supabaseUrl, supabaseKey);
+              successPanel.SetActive(false); 
+    }
 
     public async void UserLogin()
     {
-        // Initialize the Supabase client
-        clientSupabase = new Supabase.Client(supabaseUrl, supabaseKey);
+        if (clientSupabase == null)
+        {
+            Debug.LogError("Supabase client is not initialized.");
+            return;
+        }
 
         // prueba
         var test_response = await clientSupabase
@@ -36,80 +48,101 @@ public class SupabaseManager : MonoBehaviour
             .Get();
         Debug.Log(test_response.Content);
 
-
-
-        // filtro seg�n datos de login
+        // filtro según datos de login
         var login_password = await clientSupabase
-          .From<usuarios>()
-          .Select("password")
-          .Where(usuarios => usuarios.username == _userIDInput.text)
-          .Get();
+            .From<usuarios>()
+            .Select("password")
+            .Where(usuarios => usuarios.username == _userIDInput.text)
+            .Get();
 
-
-        if (login_password.Model.password.Equals(_userPassInput.text))
+        // Verificar si login_password tiene resultados
+        if (login_password.Models.Count > 0)
         {
-            print("LOGIN SUCCESSFUL");
-            _stateText.text = "LOGIN SUCCESSFUL";
-            _stateText.color = Color.green;
+            var usuario = login_password.Models[0];
+            if (usuario.password.Equals(_userPassInput.text))
+            {
+                print("LOGIN SUCCESSFUL");
+                _stateText.text = "LOGIN SUCCESSFUL";
+                _stateText.color = Color.green;
+                 ShowSuccessPanel();
+            }
+            else
+            {
+                print("WRONG PASSWORD");
+                _stateText.text = "WRONG PASSWORD";
+                _stateText.color = Color.red;
+            }
         }
         else
         {
-            print("WRONG PASSWORD");
-            _stateText.text = "WRONG PASSWORD";
+            print("USER NOT FOUND");
+            _stateText.text = "USER NOT FOUND";
             _stateText.color = Color.red;
         }
     }
 
     public async void InsertarNuevoUsuario()
     {
+        if (clientSupabase == null)
+        {
+            Debug.LogError("Supabase client is not initialized.");
+            return;
+        }
 
-        // Initialize the Supabase client
-        clientSupabase = new Supabase.Client(supabaseUrl, supabaseKey);
-
-        // Consultar el �ltimo id utilizado (ID = index)
+        // Consultar el último id utilizado (ID = index)
         var ultimoId = await clientSupabase
             .From<usuarios>()
             .Select("id")
-            .Order(usuarios => usuarios.id, Postgrest.Constants.Ordering.Descending) // Ordenar en orden descendente para obtener el �ltimo id
+            .Order(usuarios => usuarios.id, Postgrest.Constants.Ordering.Descending) // Ordenar en orden descendente para obtener el último id
             .Get();
 
-        int nuevoId = 1; // Valor predeterminado si la tabla est� vac�a
+        int nuevoId = 1; // Valor predeterminado si la tabla está vacía
 
-        if (ultimoId != null)
+        if (ultimoId.Models.Count > 0)
         {
-            nuevoId = ultimoId.Model.id + 1; // Incrementar el �ltimo id
+            nuevoId = ultimoId.Models[0].id + 1; // Incrementar el último id
         }
 
         // Crear el nuevo usuario con el nuevo id
         var nuevoUsuario = new usuarios
         {
-
             id = nuevoId,
             username = _userIDInput.text,
-            age = Random.Range(0, 100), //luego creo el campo que falta en la UI
+            age = Random.Range(0, 100), // luego creo el campo que falta en la UI
             password = _userPassInput.text,
         };
-
 
         // Insertar el nuevo usuario
         var resultado = await clientSupabase
             .From<usuarios>()
             .Insert(new[] { nuevoUsuario });
 
-
-        //verifico el estado de la inserci�n 
+        // Verifico el estado de la inserción 
         if (resultado.ResponseMessage.IsSuccessStatusCode)
         {
             _stateText.text = "Usuario Correctamente Ingresado";
             _stateText.color = Color.green;
+             ShowSuccessPanel();
         }
         else
         {
             _stateText.text = "Error en el registro de usuario";
-            _stateText.text = resultado.ResponseMessage.ToString();
-            _stateText.color = Color.green;
+            _stateText.text += "\n" + resultado.ResponseMessage.ToString();
+            _stateText.color = Color.red;
         }
-
     }
+
+
+      private void ShowSuccessPanel()
+    {
+        successPanel.SetActive(true); // Mostrar el panel de éxito
+    }
+
+    public void OnPlayButtonClick()
+{
+    // Aquí puedes cargar la escena del juego o realizar cualquier acción que desees
+    SceneManager.LoadScene("TriviaSelectScene"); // Asegúrate de tener una escena llamada "GameScene"
+}
+
 }
 
