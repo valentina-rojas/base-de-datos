@@ -204,7 +204,52 @@ public class UIManagment : MonoBehaviour
         // Muestra el puntaje final
 
         _scoreText.text = "Puntaje final: " + GameManager.Instance.GetTotalPoints();
+
+ // Guardar el intento en Supabase
+        string username = SupabaseManager.CurrentUsername;
+        int puntaje = GameManager.Instance.GetTotalPoints();
+
+        if (!string.IsNullOrEmpty(username))
+        {
+            //GuardarIntentoEnSupabase(username, puntaje);
+        }
+        else
+        {
+            Debug.LogError("No se puede guardar el intento en Supabase: Nombre de usuario no válido.");
+        }
     }
+
+    /*private async void GuardarIntentoEnSupabase(string username, int puntaje)
+    {
+        // Obtener el ID de la categoría de trivia actual (ajusta según tu implementación)
+        int idCategoria = ObtenerIdCategoriaActual(); // Implementa según tu lógica
+
+        // Crear un nuevo registro para 'intentos'
+        var nuevoIntento = new intentos
+        {
+            id_usuario = 1, // Ajusta según tu lógica de relación con usuarios
+            id_category = iselectedTrivia,
+            puntaje = finalScore
+        };
+
+        // Insertar el nuevo intento en Supabase
+        var resultado = await clientSupabase
+            .From<intentos>()
+            .Insert(new[] { nuevoIntento });
+
+        if (resultado.ResponseMessage.IsSuccessStatusCode)
+        {
+            Debug.Log("Intento guardado correctamente en Supabase.");
+        }
+        else
+        {
+            Debug.LogError("Error al guardar intento en Supabase: " + resultado.ResponseMessage.ToString());
+        }
+    }*/
+
+
+
+
 
     public void RespuestaCorrecta()
     {

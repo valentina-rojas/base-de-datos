@@ -12,15 +12,20 @@ public class TriviaSelection : MonoBehaviour
 {
     string supabaseUrl = "https://qyewiiivujjprrkornqr.supabase.co"; //COMPLETAR
     string supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5ZXdpaWl2dWpqcHJya29ybnFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTkwODkwODksImV4cCI6MjAzNDY2NTA4OX0.w28iWvwPbRAcDA7KoNsl4qISpwg3JJSBS71OxdlxNq8"; //COMPLETAR
-    Supabase.Client clientSupabase;
+    public Supabase.Client clientSupabase;
 
     List<trivia> trivias = new List<trivia>();
     [SerializeField] TMP_Dropdown _dropdown;
+
+ public static int SelectedTriviaId { get; private set; } // Variable para almacenar el id de la trivia seleccionada
+
+    public static TriviaSelection Instance { get; private set; } // Propiedad estática para acceder a la instancia única de TriviaSelection
 
     public DatabaseManager databaseManager;
 
     async void Start()
     {
+              Instance = this; // Asignar la instancia actual a Instance
         clientSupabase = new Supabase.Client(supabaseUrl, supabaseKey);
 
         await SelectTrivias();
@@ -63,7 +68,14 @@ public class TriviaSelection : MonoBehaviour
 
     public void OnStartButtonClicked()
     {
+
+
+
         int selectedIndex = _dropdown.value;
+
+        // Obtener el id de la trivia seleccionada
+        SelectedTriviaId = trivias[selectedIndex].id;
+
         string selectedTrivia = _dropdown.options[selectedIndex].text;
 
         PlayerPrefs.SetInt("SelectedIndex", selectedIndex+1);

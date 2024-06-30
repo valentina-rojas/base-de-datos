@@ -19,18 +19,21 @@ public class SupabaseManager : MonoBehaviour
     [SerializeField] GameObject successPanel;
     [SerializeField] Button playButton;
 
-    string supabaseUrl = "https://qyewiiivujjprrkornqr.supabase.co"; // COMPLETAR
-    string supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5ZXdpaWl2dWpqcHJya29ybnFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTkwODkwODksImV4cCI6MjAzNDY2NTA4OX0.w28iWvwPbRAcDA7KoNsl4qISpwg3JJSBS71OxdlxNq8"; // COMPLETAR
+    string supabaseUrl = "https://qyewiiivujjprrkornqr.supabase.co";
+    string supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5ZXdpaWl2dWpqcHJya29ybnFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTkwODkwODksImV4cCI6MjAzNDY2NTA4OX0.w28iWvwPbRAcDA7KoNsl4qISpwg3JJSBS71OxdlxNq8";
 
     Supabase.Client clientSupabase;
 
     private usuarios _usuarios = new usuarios();
 
+    public static string CurrentUsername { get; private set; }
+    public static int CurrentUserId { get; private set; }
+
     private void Start()
     {
         // Initialize the Supabase client once at the start
         clientSupabase = new Supabase.Client(supabaseUrl, supabaseKey);
-              successPanel.SetActive(false); 
+        successPanel.SetActive(false);
     }
 
     public async void UserLogin()
@@ -51,7 +54,7 @@ public class SupabaseManager : MonoBehaviour
         // filtro según datos de login
         var login_password = await clientSupabase
             .From<usuarios>()
-            .Select("password")
+             .Select("id, password") // Seleccionar el ID y la contraseña
             .Where(usuarios => usuarios.username == _userIDInput.text)
             .Get();
 
@@ -64,7 +67,11 @@ public class SupabaseManager : MonoBehaviour
                 print("LOGIN SUCCESSFUL");
                 _stateText.text = "LOGIN SUCCESSFUL";
                 _stateText.color = Color.green;
-                 ShowSuccessPanel();
+                SupabaseManager.CurrentUsername = _userIDInput.text; // Guardar el nombre de usuario actual
+
+                SupabaseManager.CurrentUserId = usuario.id;  // Guardar el id del usuario actual
+
+                ShowSuccessPanel();
             }
             else
             {
@@ -122,7 +129,9 @@ public class SupabaseManager : MonoBehaviour
         {
             _stateText.text = "Usuario Correctamente Ingresado";
             _stateText.color = Color.green;
-             ShowSuccessPanel();
+            SupabaseManager.CurrentUsername = _userIDInput.text; // Guardar el nombre de usuario actual
+            SupabaseManager.CurrentUserId = nuevoId;  // Guardar el id del usuario actual
+            ShowSuccessPanel();
         }
         else
         {
@@ -133,16 +142,16 @@ public class SupabaseManager : MonoBehaviour
     }
 
 
-      private void ShowSuccessPanel()
+    private void ShowSuccessPanel()
     {
         successPanel.SetActive(true); // Mostrar el panel de éxito
     }
 
     public void OnPlayButtonClick()
-{
-    // Aquí puedes cargar la escena del juego o realizar cualquier acción que desees
-    SceneManager.LoadScene("TriviaSelectScene"); // Asegúrate de tener una escena llamada "GameScene"
-}
+    {
+        // Aquí puedes cargar la escena del juego o realizar cualquier acción que desees
+        SceneManager.LoadScene("TriviaSelectScene"); // Asegúrate de tener una escena llamada "GameScene"
+    }
 
 }
 
