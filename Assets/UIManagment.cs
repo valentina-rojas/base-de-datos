@@ -219,37 +219,6 @@ public class UIManagment : MonoBehaviour
         }
     }
 
-    /*private async void GuardarIntentoEnSupabase(string username, int puntaje)
-    {
-        // Obtener el ID de la categoría de trivia actual (ajusta según tu implementación)
-        int idCategoria = ObtenerIdCategoriaActual(); // Implementa según tu lógica
-
-        // Crear un nuevo registro para 'intentos'
-        var nuevoIntento = new intentos
-        {
-            id_usuario = 1, // Ajusta según tu lógica de relación con usuarios
-            id_category = iselectedTrivia,
-            puntaje = finalScore
-        };
-
-        // Insertar el nuevo intento en Supabase
-        var resultado = await clientSupabase
-            .From<intentos>()
-            .Insert(new[] { nuevoIntento });
-
-        if (resultado.ResponseMessage.IsSuccessStatusCode)
-        {
-            Debug.Log("Intento guardado correctamente en Supabase.");
-        }
-        else
-        {
-            Debug.LogError("Error al guardar intento en Supabase: " + resultado.ResponseMessage.ToString());
-        }
-    }*/
-
-
-
-
 
     public void RespuestaCorrecta()
     {

@@ -6,6 +6,7 @@ using Postgrest.Models;
 using TMPro;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 public class RankingManager : MonoBehaviour
 {
@@ -98,7 +99,7 @@ public class RankingManager : MonoBehaviour
 
     void ShowGeneralRanking()
     {
-        var sortedUsers = intentosList.OrderByDescending(x => x.puntaje);
+        var sortedUsers = intentosList.OrderByDescending(x => x.puntaje).Take(7);;
 
         // Construir el texto para mostrar en el ranking general
         string generalRankingText = "";
@@ -123,7 +124,7 @@ public class RankingManager : MonoBehaviour
         if (selectedCategory != null)
         {
             // Filtrar los intentos por la categoría seleccionada y ordenar por puntaje descendente
-            var categoryUsers = intentosList.Where(x => x.id_category == selectedCategory.id).OrderByDescending(x => x.puntaje);
+            var categoryUsers = intentosList.Where(x => x.id_category == selectedCategory.id).OrderByDescending(x => x.puntaje).Take(7);;
 
             // Construir el texto para mostrar en el ranking por categoría
             string categoryRankingText = "";
@@ -146,5 +147,11 @@ public class RankingManager : MonoBehaviour
     {
         string selectedCategory = _dropdown.options[index].text;
         ShowCategoryRanking(selectedCategory);
+    }
+
+
+     public void ChangeScene(string name)
+    {
+        SceneManager.LoadScene(name);
     }
 }

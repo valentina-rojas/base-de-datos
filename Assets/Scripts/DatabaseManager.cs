@@ -24,8 +24,6 @@ public class DatabaseManager : MonoBehaviour
         
         index = PlayerPrefs.GetInt("SelectedIndex");
 
-        //print(_selectedTrivia);
-
         await LoadTriviaData(index);
     }
 
@@ -43,10 +41,6 @@ public class DatabaseManager : MonoBehaviour
 
         print("Response from query: "+ response.Models.Count);
         print("ResponseList from GM: "+ GameManager.Instance.responseList.Count);
-
-    
-
-
     }
 
 }

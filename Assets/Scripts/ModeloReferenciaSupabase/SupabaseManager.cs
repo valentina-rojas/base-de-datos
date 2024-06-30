@@ -162,10 +162,15 @@ public class SupabaseManager : MonoBehaviour
         successPanel.SetActive(true); // Mostrar el panel de éxito
     }
 
-    public void OnPlayButtonClick()
+   public void OnPlayButtonClick()
     {
         // Aquí puedes cargar la escena del juego o realizar cualquier acción que desees
         SceneManager.LoadScene("TriviaSelectScene"); // Asegúrate de tener una escena llamada "GameScene"
+    }
+
+  public void ChangeScene(string name)
+    {
+        SceneManager.LoadScene(name);
     }
 
 }
