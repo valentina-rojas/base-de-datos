@@ -89,57 +89,72 @@ public class SupabaseManager : MonoBehaviour
     }
 
     public async void InsertarNuevoUsuario()
+{
+    if (clientSupabase == null)
     {
-        if (clientSupabase == null)
-        {
-            Debug.LogError("Supabase client is not initialized.");
-            return;
-        }
-
-        // Consultar el último id utilizado (ID = index)
-        var ultimoId = await clientSupabase
-            .From<usuarios>()
-            .Select("id")
-            .Order(usuarios => usuarios.id, Postgrest.Constants.Ordering.Descending) // Ordenar en orden descendente para obtener el último id
-            .Get();
-
-        int nuevoId = 1; // Valor predeterminado si la tabla está vacía
-
-        if (ultimoId.Models.Count > 0)
-        {
-            nuevoId = ultimoId.Models[0].id + 1; // Incrementar el último id
-        }
-
-        // Crear el nuevo usuario con el nuevo id
-        var nuevoUsuario = new usuarios
-        {
-            id = nuevoId,
-            username = _userIDInput.text,
-            age = Random.Range(0, 100), // luego creo el campo que falta en la UI
-            password = _userPassInput.text,
-        };
-
-        // Insertar el nuevo usuario
-        var resultado = await clientSupabase
-            .From<usuarios>()
-            .Insert(new[] { nuevoUsuario });
-
-        // Verifico el estado de la inserción 
-        if (resultado.ResponseMessage.IsSuccessStatusCode)
-        {
-            _stateText.text = "Usuario Correctamente Ingresado";
-            _stateText.color = Color.green;
-            SupabaseManager.CurrentUsername = _userIDInput.text; // Guardar el nombre de usuario actual
-            SupabaseManager.CurrentUserId = nuevoId;  // Guardar el id del usuario actual
-            ShowSuccessPanel();
-        }
-        else
-        {
-            _stateText.text = "Error en el registro de usuario";
-            _stateText.text += "\n" + resultado.ResponseMessage.ToString();
-            _stateText.color = Color.red;
-        }
+        Debug.LogError("Supabase client is not initialized.");
+        return;
     }
+
+    // Verificar si el nombre de usuario ya existe
+    var usuarioExistente = await clientSupabase
+        .From<usuarios>()
+        .Select("username")
+        .Where(usuarios => usuarios.username == _userIDInput.text)
+        .Get();
+
+    if (usuarioExistente.Models.Count > 0)
+    {
+        _stateText.text = "Nombre de usuario ya existe";
+        _stateText.color = Color.red;
+        return;
+    }
+
+    // Consultar el último id utilizado (ID = index)
+    var ultimoId = await clientSupabase
+        .From<usuarios>()
+        .Select("id")
+        .Order(usuarios => usuarios.id, Postgrest.Constants.Ordering.Descending) // Ordenar en orden descendente para obtener el último id
+        .Get();
+
+    int nuevoId = 1; // Valor predeterminado si la tabla está vacía
+
+    if (ultimoId.Models.Count > 0)
+    {
+        nuevoId = ultimoId.Models[0].id + 1; // Incrementar el último id
+    }
+
+    // Crear el nuevo usuario con el nuevo id
+    var nuevoUsuario = new usuarios
+    {
+        id = nuevoId,
+        username = _userIDInput.text,
+        age = Random.Range(0, 100), // luego creo el campo que falta en la UI
+        password = _userPassInput.text,
+    };
+
+    // Insertar el nuevo usuario
+    var resultado = await clientSupabase
+        .From<usuarios>()
+        .Insert(new[] { nuevoUsuario });
+
+    // Verifico el estado de la inserción 
+    if (resultado.ResponseMessage.IsSuccessStatusCode)
+    {
+        _stateText.text = "Usuario Correctamente Ingresado";
+        _stateText.color = Color.green;
+        SupabaseManager.CurrentUsername = _userIDInput.text; // Guardar el nombre de usuario actual
+        SupabaseManager.CurrentUserId = nuevoId;  // Guardar el id del usuario actual
+        ShowSuccessPanel();
+    }
+    else
+    {
+        _stateText.text = "Error en el registro de usuario";
+        _stateText.text += "\n" + resultado.ResponseMessage.ToString();
+        _stateText.color = Color.red;
+    }
+}
+
 
 
     private void ShowSuccessPanel()
