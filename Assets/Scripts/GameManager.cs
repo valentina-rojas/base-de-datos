@@ -34,8 +34,8 @@ public class GameManager : MonoBehaviour
 
     public static GameManager Instance { get; private set; }
 
-    string supabaseUrl = "https://qyewiiivujjprrkornqr.supabase.co"; 
-    string supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5ZXdpaWl2dWpqcHJya29ybnFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTkwODkwODksImV4cCI6MjAzNDY2NTA4OX0.w28iWvwPbRAcDA7KoNsl4qISpwg3JJSBS71OxdlxNq8"; 
+    string supabaseUrl = "https://qyewiiivujjprrkornqr.supabase.co";
+    string supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5ZXdpaWl2dWpqcHJya29ybnFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTkwODkwODksImV4cCI6MjAzNDY2NTA4OX0.w28iWvwPbRAcDA7KoNsl4qISpwg3JJSBS71OxdlxNq8";
 
     // Variable para almacenar la cantidad total de preguntas
     public int TotalQuestions
@@ -97,6 +97,20 @@ public class GameManager : MonoBehaviour
         if (!isCalled)
         {
             _answers.Clear();
+
+
+            Debug.Log("Iniciando trivia con " + responseList.Count + " preguntas.");
+
+            if (responseList.Count > 0)
+            {
+                Debug.Log("Primera pregunta: " + responseList[0].QuestionText);
+            }
+            else
+            {
+                Debug.LogError("responseList está vacío. Verifica la inicialización de responseList.");
+            }
+
+
             //si se han mostrado todas las preguntas, reiniciar el registro de índices
             if (usedQuestionIndices.Count >= responseList.Count)
             {

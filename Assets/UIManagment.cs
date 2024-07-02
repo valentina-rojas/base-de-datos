@@ -23,7 +23,7 @@ public class UIManagment : MonoBehaviour
 
     [SerializeField] Button _backButton;
     [SerializeField] Button _nextButton;
-       [SerializeField] Button _backMenuButton;
+    [SerializeField] Button _backMenuButton;
 
     private List<string> _answers = new List<string>();
 
@@ -57,7 +57,7 @@ public class UIManagment : MonoBehaviour
         _timerActive = true;
         _originalButtonColor = _buttons[0].GetComponent<Image>().color;
         _nextButton.gameObject.SetActive(false); // Ocultar el botón "Siguiente" inicialmente
-                                          
+
         int finalScore = GameManager.Instance.GetTotalPoints();
         _pointsText.text = "Puntos: " + GameManager.Instance.GetTotalPoints();
         _resultsPanel.SetActive(false);
@@ -149,7 +149,7 @@ public class UIManagment : MonoBehaviour
     {
         RestoreButtonColor();
         _nextButton.gameObject.SetActive(false); // Ocultar el botón "Siguiente"
-                                                 //GameManager.Instance.CategoryAndQuestionQuery(false); // Cargar la siguiente pregunta
+        //GameManager.Instance.CategoryAndQuestionQuery(false); // Cargar la siguiente pregunta
         Invoke("NextAnswer", 0f);
         foreach (Button button in _buttons)
         {
@@ -193,25 +193,19 @@ public class UIManagment : MonoBehaviour
 
     public void ResultsScene()
     {
-        //Destroy(GameManager.Instance);
-
-        //  SceneManager.LoadScene("ResultsScene"); // Cargar la escena de resultados
-        //      Destroy(UIManagment.Instance);
-
-
         // Muestra el panel de resultados
         _resultsPanel.SetActive(true);
-        // Muestra el puntaje final
 
+        // Muestra el puntaje final
         _scoreText.text = "Puntaje final: " + GameManager.Instance.GetTotalPoints();
 
- // Guardar el intento en Supabase
+        // Guardar el intento en Supabase
         string username = SupabaseManager.CurrentUsername;
         int puntaje = GameManager.Instance.GetTotalPoints();
 
         if (!string.IsNullOrEmpty(username))
         {
-            //GuardarIntentoEnSupabase(username, puntaje);
+        //GuardarIntentoEnSupabase(username, puntaje);
         }
         else
         {
