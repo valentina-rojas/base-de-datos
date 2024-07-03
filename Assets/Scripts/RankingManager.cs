@@ -101,16 +101,17 @@ public class RankingManager : MonoBehaviour
     {
         var sortedUsers = intentosList.OrderByDescending(x => x.puntaje).Take(7);;
 
-        // Construir el texto para mostrar en el ranking general
-        string generalRankingText = "";
-        foreach (var intento in sortedUsers)
+    // Construir el texto para mostrar en el ranking general
+    string generalRankingText = "Usuario          Puntaje\n";
+    foreach (var intento in sortedUsers)
+    {
+        var user = usuariosList.FirstOrDefault(u => u.id == intento.id_usuario);
+        if (user != null)
         {
-            var user = usuariosList.FirstOrDefault(u => u.id == intento.id_usuario);
-            if (user != null)
-            {
-                generalRankingText += $"Usuario: {user.username}, Puntaje: {intento.puntaje}\n";
-            }
+            // Utilizar interpolación de cadenas para formatear correctamente
+            generalRankingText += $"{user.username,-20} {intento.puntaje}\n"; // Ajustar el número según la longitud máxima esperada de nombres
         }
+    }
 
         // Mostrar el texto en el UI
         this.generalRankingText.text = generalRankingText;
@@ -127,15 +128,18 @@ public class RankingManager : MonoBehaviour
             var categoryUsers = intentosList.Where(x => x.id_category == selectedCategory.id).OrderByDescending(x => x.puntaje).Take(7);;
 
             // Construir el texto para mostrar en el ranking por categoría
-            string categoryRankingText = "";
-            foreach (var intento in categoryUsers)
+          string categoryRankingText = "Usuario            Puntaje\n";
+        foreach (var intento in categoryUsers)
+        {
+            var user = usuariosList.FirstOrDefault(u => u.id == intento.id_usuario);
+            if (user != null)
             {
-                var user = usuariosList.FirstOrDefault(u => u.id == intento.id_usuario);
-                if (user != null)
-                {
-                    categoryRankingText += $"Usuario: {user.username}, Puntaje: {intento.puntaje} \n";
-                }
+                // Ajustar la alineación usando espacios o tabulaciones según la longitud del nombre
+                int spacesCount = 20 - user.username.Length; // Espacios para alinear
+                categoryRankingText += $"{user.username}{new string(' ', spacesCount)}{intento.puntaje}\n";
             }
+        }
+
 
             // Mostrar el texto en el UI
             this.categoryRankingText.text = categoryRankingText;
