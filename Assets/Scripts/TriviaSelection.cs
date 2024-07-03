@@ -17,7 +17,7 @@ public class TriviaSelection : MonoBehaviour
     List<trivia> trivias = new List<trivia>();
     [SerializeField] TMP_Dropdown _dropdown;
 
- public static int SelectedTriviaId { get; private set; } // Variable para almacenar el id de la trivia seleccionada
+    public static int SelectedTriviaId { get; private set; } // Variable para almacenar el id de la trivia seleccionada
 
     public static TriviaSelection Instance { get; private set; } // Propiedad estática para acceder a la instancia única de TriviaSelection
 

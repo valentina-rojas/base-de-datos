@@ -105,7 +105,7 @@ public class SupabaseManager : MonoBehaviour
 
     if (usuarioExistente.Models.Count > 0)
     {
-        _stateText.text = "Nombre de usuario ya existe";
+        _stateText.text = "USERNAME ALREADY EXISTS";
         _stateText.color = Color.red;
         return;
     }
@@ -141,7 +141,7 @@ public class SupabaseManager : MonoBehaviour
     // Verifico el estado de la inserción 
     if (resultado.ResponseMessage.IsSuccessStatusCode)
     {
-        _stateText.text = "Usuario Correctamente Ingresado";
+        _stateText.text = "SIGN UP SUCCESSFUL";
         _stateText.color = Color.green;
         SupabaseManager.CurrentUsername = _userIDInput.text; // Guardar el nombre de usuario actual
         SupabaseManager.CurrentUserId = nuevoId;  // Guardar el id del usuario actual
@@ -149,7 +149,7 @@ public class SupabaseManager : MonoBehaviour
     }
     else
     {
-        _stateText.text = "Error en el registro de usuario";
+        _stateText.text = "ERROR TRY AGAIN";
         _stateText.text += "\n" + resultado.ResponseMessage.ToString();
         _stateText.color = Color.red;
     }

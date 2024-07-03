@@ -26,7 +26,6 @@ public class GameManager : MonoBehaviour
     public float timer;
     public float answerTime;
     private float _timeLeft;
-    private bool _isAnswered;
 
     string _correctAnswer;
 
@@ -42,7 +41,6 @@ public class GameManager : MonoBehaviour
     {
         get { return responseList != null ? responseList.Count : 0; }
     }
-
 
 
     // Awake para inicialización
@@ -70,14 +68,11 @@ public class GameManager : MonoBehaviour
         queryCalled = false;
         timer = initialTimerValue;
         _points = 0;
-        _isAnswered = false;
     }
 
     void StartTrivia()
     {
-        // Cargar la trivia desde la base de datos
-        //triviaManager.LoadTrivia(currentTriviaIndex);
-        //print(responseList.Count);
+
     }
 
     public void AddPoints(int pointsToAdd)
@@ -96,21 +91,8 @@ public class GameManager : MonoBehaviour
 
         if (!isCalled)
         {
-            _answers.Clear();
-
-
-            Debug.Log("Iniciando trivia con " + responseList.Count + " preguntas.");
-
-            if (responseList.Count > 0)
-            {
-                Debug.Log("Primera pregunta: " + responseList[0].QuestionText);
-            }
-            else
-            {
-                Debug.LogError("responseList está vacío. Verifica la inicialización de responseList.");
-            }
-
-
+        
+ _answers.Clear();
             //si se han mostrado todas las preguntas, reiniciar el registro de índices
             if (usedQuestionIndices.Count >= responseList.Count)
             {

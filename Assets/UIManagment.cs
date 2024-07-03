@@ -86,7 +86,9 @@ public class UIManagment : MonoBehaviour
                 GameManager.Instance.timer = 0;
                 OnTimeUp(); // Tiempo agotado, manejar la respuesta incorrecta
             }
-            _timerText.text = GameManager.Instance.timer.ToString("f0"); // Update timer text
+           
+           // _timerText.text = GameManager.Instance.timer.ToString("f0"); // Update timer text
+_timerText.text = "Tiempo: " + GameManager.Instance.timer.ToString("f0");
         }
     }
 
@@ -138,7 +140,7 @@ public class UIManagment : MonoBehaviour
         else
         {
             Debug.Log("Respuesta incorrecta. Int�ntalo de nuevo.");
-
+ _timerActive = false; // Detener el temporizador
             ChangeButtonColor(buttonIndex, Color.red);
             // Invoke("RestoreButtonColor", 2f);
         }
