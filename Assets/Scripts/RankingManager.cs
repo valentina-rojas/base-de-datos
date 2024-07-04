@@ -102,14 +102,14 @@ public class RankingManager : MonoBehaviour
         var sortedUsers = intentosList.OrderByDescending(x => x.puntaje).Take(7);;
 
     // Construir el texto para mostrar en el ranking general
-    string generalRankingText = "Usuario          Puntaje\n";
+    string generalRankingText = "S";
     foreach (var intento in sortedUsers)
     {
         var user = usuariosList.FirstOrDefault(u => u.id == intento.id_usuario);
         if (user != null)
         {
             // Utilizar interpolación de cadenas para formatear correctamente
-            generalRankingText += $"{user.username,-20} {intento.puntaje}\n"; // Ajustar el número según la longitud máxima esperada de nombres
+              generalRankingText += $"{user.username,-20} {intento.puntaje,5}\n";  // Ajustar el número según la longitud máxima esperada de nombres
         }
     }
 
@@ -128,15 +128,14 @@ public class RankingManager : MonoBehaviour
             var categoryUsers = intentosList.Where(x => x.id_category == selectedCategory.id).OrderByDescending(x => x.puntaje).Take(7);;
 
             // Construir el texto para mostrar en el ranking por categoría
-          string categoryRankingText = "Usuario            Puntaje\n";
+          string categoryRankingText = "";
         foreach (var intento in categoryUsers)
         {
             var user = usuariosList.FirstOrDefault(u => u.id == intento.id_usuario);
             if (user != null)
             {
                 // Ajustar la alineación usando espacios o tabulaciones según la longitud del nombre
-                int spacesCount = 20 - user.username.Length; // Espacios para alinear
-                categoryRankingText += $"{user.username}{new string(' ', spacesCount)}{intento.puntaje}\n";
+                categoryRankingText += $"{user.username,-20} {intento.puntaje,5}\n";
             }
         }
 
