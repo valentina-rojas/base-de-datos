@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     //public TriviaManager triviaManager;
 
     public List<question> responseList; //lista donde guardo la respuesta de la query hecha en la pantalla de selección de categoría
-    private List<int> usedQuestionIndices = new List<int>();  // Lista para mantener los índices de preguntas utilizadas
+    private List<int> usedQuestionIndices = new List<int>();  // lista para mantener los índices de preguntas utilizadas
 
     public int currentTriviaIndex = 0;
     public int randomQuestionIndex = 0;
@@ -19,7 +19,6 @@ public class GameManager : MonoBehaviour
 
     public int _points;
     private static int _totalPoints = 0;
-    //private int _maxAttempts = 10;
     public int _numQuestionAnswered = 0;
 
     public float initialTimerValue = 10f;
@@ -92,7 +91,8 @@ public class GameManager : MonoBehaviour
         if (!isCalled)
         {
         
- _answers.Clear();
+             _answers.Clear();
+
             //si se han mostrado todas las preguntas, reiniciar el registro de índices
             if (usedQuestionIndices.Count >= responseList.Count)
             {
@@ -131,7 +131,7 @@ public class GameManager : MonoBehaviour
 
             UIManagment.Instance.queryCalled = true;
 
-            // ajustar variable para la próxima pregunta
+            // reinicia variables para la próxima pregunta
             timer = initialTimerValue;
             UIManagment.Instance._timerActive = true;
             _points = 0;
@@ -151,16 +151,16 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Juego terminado. Puntos totales: " + _totalPoints);
 
-        // Obtener el id del usuario actualmente logueado desde SupabaseManager
+        // obtener el id del usuario actualmente logueado desde SupabaseManager
         int userId = SupabaseManager.CurrentUserId;
 
-        // Obtener el id de la categoría de trivia actual (usando el id de la trivia seleccionada)
+        // obtener el id de la categoría de trivia actual 
         int categoryId = TriviaSelection.SelectedTriviaId;
 
-        // Obtener el puntaje final
+        // obtener el puntaje final
         int puntajeFinal = _totalPoints;
 
-        // Llamar al método para guardar en Supabase
+        // llama al método para guardar el intento en Supabase
         GuardarIntentoEnSupabase(userId, categoryId, puntajeFinal);
 
         UIManagment.Instance.ResultsScene();
@@ -173,26 +173,26 @@ public class GameManager : MonoBehaviour
     }
 
 
-    // Método para guardar un intento en la tabla intentos
+
     public async void GuardarIntentoEnSupabase(int userId, int categoryId, int puntajeFinal)
     {
 
 
-        // Consultar el último id utilizado (ID = index)
+        // consulta el último id utilizado (ID = index)
         var ultimoId = await clientSupabase
             .From<intentos>()
             .Select("id")
-            .Order(intentos => intentos.id, Postgrest.Constants.Ordering.Descending) // Ordenar en orden descendente para obtener el último id
+            .Order(intentos => intentos.id, Postgrest.Constants.Ordering.Descending) // ordena en orden descendente para obtener el último id
             .Get();
 
-        int nuevoId = 1; // Valor predeterminado si la tabla está vacía
+        int nuevoId = 1; // valor predeterminado si la tabla está vacía
 
         if (ultimoId.Models.Count > 0)
         {
-            nuevoId = ultimoId.Models[0].id + 1; // Incrementar el último id
+            nuevoId = ultimoId.Models[0].id + 1; // incrementar el último id
         }
 
-        // Crear un nuevo intento con los datos obtenidos
+        // crear un nuevo intento con los datos obtenidos
         var nuevoIntento = new intentos
         {
             id = nuevoId,
@@ -201,7 +201,7 @@ public class GameManager : MonoBehaviour
             puntaje = puntajeFinal
         };
 
-        // Insertar el nuevo intento en Supabase
+        // insertar el nuevo intento en Supabase
         var resultado = await clientSupabase
             .From<intentos>()
             .Insert(new[] { nuevoIntento });

@@ -18,8 +18,8 @@ public class RankingManager : MonoBehaviour
     List<intentos> intentosList = new List<intentos>();
     List<usuarios> usuariosList = new List<usuarios>();
     [SerializeField] TMP_Dropdown _dropdown;
-    [SerializeField] TMP_Text generalRankingText; // Referencia al objeto TextMeshPro para mostrar ranking general
-    [SerializeField] TMP_Text categoryRankingText; // Referencia al objeto TextMeshPro para mostrar ranking por categoría
+    [SerializeField] TMP_Text generalRankingText; 
+    [SerializeField] TMP_Text categoryRankingText; 
 
     public static int SelectedTriviaId { get; private set; }
     public static RankingManager Instance { get; private set; }
@@ -97,50 +97,46 @@ public class RankingManager : MonoBehaviour
         _dropdown.AddOptions(categories);
     }
 
+
     void ShowGeneralRanking()
     {
         var sortedUsers = intentosList.OrderByDescending(x => x.puntaje).Take(7);;
 
-    // Construir el texto para mostrar en el ranking general
-    string generalRankingText = "S";
+        string generalRankingText = "";
+
     foreach (var intento in sortedUsers)
     {
         var user = usuariosList.FirstOrDefault(u => u.id == intento.id_usuario);
         if (user != null)
         {
-            // Utilizar interpolación de cadenas para formatear correctamente
-              generalRankingText += $"{user.username,-20} {intento.puntaje,5}\n";  // Ajustar el número según la longitud máxima esperada de nombres
+            generalRankingText += $"{user.username,-20} {intento.puntaje,5}\n";  
         }
     }
-
-        // Mostrar el texto en el UI
+        // muestra el texto en el UI
         this.generalRankingText.text = generalRankingText;
     }
 
+
     void ShowCategoryRanking(string category)
     {
-        // Obtener la categoría seleccionada del Dropdown
+        // obtiene la categoría seleccionada del Dropdown
         var selectedCategory = trivias.FirstOrDefault(t => t.category == category);
 
         if (selectedCategory != null)
         {
-            // Filtrar los intentos por la categoría seleccionada y ordenar por puntaje descendente
-            var categoryUsers = intentosList.Where(x => x.id_category == selectedCategory.id).OrderByDescending(x => x.puntaje).Take(7);;
+            // filtra los intentos por la categoría seleccionada y ordena por puntaje descendente
+            var categoryUsers = intentosList.Where(x => x.id_category == selectedCategory.id).OrderByDescending(x => x.puntaje).Take(7);
 
-            // Construir el texto para mostrar en el ranking por categoría
-          string categoryRankingText = "";
+            string categoryRankingText = "";
         foreach (var intento in categoryUsers)
         {
             var user = usuariosList.FirstOrDefault(u => u.id == intento.id_usuario);
             if (user != null)
             {
-                // Ajustar la alineación usando espacios o tabulaciones según la longitud del nombre
                 categoryRankingText += $"{user.username,-20} {intento.puntaje,5}\n";
             }
         }
-
-
-            // Mostrar el texto en el UI
+            // muestra el texto en el UI
             this.categoryRankingText.text = categoryRankingText;
         }
     }

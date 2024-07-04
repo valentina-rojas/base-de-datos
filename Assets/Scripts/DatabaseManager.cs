@@ -7,8 +7,8 @@ using Postgrest.Models;
 
 public class DatabaseManager : MonoBehaviour
 {
-    string supabaseUrl = "https://qyewiiivujjprrkornqr.supabase.co"; //COMPLETAR
-    string supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5ZXdpaWl2dWpqcHJya29ybnFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTkwODkwODksImV4cCI6MjAzNDY2NTA4OX0.w28iWvwPbRAcDA7KoNsl4qISpwg3JJSBS71OxdlxNq8"; //COMPLETAR
+    string supabaseUrl = "https://qyewiiivujjprrkornqr.supabase.co"; 
+    string supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5ZXdpaWl2dWpqcHJya29ybnFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTkwODkwODksImV4cCI6MjAzNDY2NTA4OX0.w28iWvwPbRAcDA7KoNsl4qISpwg3JJSBS71OxdlxNq8"; 
 
     Supabase.Client clientSupabase;
 
@@ -35,7 +35,7 @@ public class DatabaseManager : MonoBehaviour
             .Select("id, question, answer1, answer2, answer3, correct_answer, trivia_id, trivia(id, category)")
             .Get();
 
-        GameManager.Instance.currentTriviaIndex = index;
+        GameManager.Instance.currentTriviaIndex = index; 
 
         GameManager.Instance.responseList = response.Models;
 

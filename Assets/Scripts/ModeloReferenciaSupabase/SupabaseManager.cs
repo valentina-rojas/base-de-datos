@@ -10,12 +10,11 @@ using UnityEngine.SceneManagement;
 
 public class SupabaseManager : MonoBehaviour
 {
-    [Header("Campos de Interfaz")]
+
     [SerializeField] TMP_InputField _userIDInput;
     [SerializeField] TMP_InputField _userPassInput;
     [SerializeField] TextMeshProUGUI _stateText;
 
-    [Header("Panel de Éxito")]
     [SerializeField] GameObject successPanel;
     [SerializeField] Button playButton;
 
@@ -26,12 +25,11 @@ public class SupabaseManager : MonoBehaviour
 
     private usuarios _usuarios = new usuarios();
 
-    public static string CurrentUsername { get; private set; }
-    public static int CurrentUserId { get; private set; }
+    public static string CurrentUsername { get; private set; } // para guardar el nombre del usuario actual
+    public static int CurrentUserId { get; private set; } // para guardar el id del usuario actual
 
     private void Start()
     {
-        // Initialize the Supabase client once at the start
         clientSupabase = new Supabase.Client(supabaseUrl, supabaseKey);
         successPanel.SetActive(false);
     }
@@ -54,11 +52,11 @@ public class SupabaseManager : MonoBehaviour
         // filtro según datos de login
         var login_password = await clientSupabase
             .From<usuarios>()
-             .Select("id, password") // Seleccionar el ID y la contraseña
+             .Select("id, password") // selecciona el ID y la contraseña
             .Where(usuarios => usuarios.username == _userIDInput.text)
             .Get();
 
-        // Verificar si login_password tiene resultados
+        // verifica si login_password tiene resultados
         if (login_password.Models.Count > 0)
         {
             var usuario = login_password.Models[0];
@@ -67,9 +65,9 @@ public class SupabaseManager : MonoBehaviour
                 print("LOGIN SUCCESSFUL");
                 _stateText.text = "LOGIN SUCCESSFUL";
                 _stateText.color = Color.green;
-                SupabaseManager.CurrentUsername = _userIDInput.text; // Guardar el nombre de usuario actual
+                SupabaseManager.CurrentUsername = _userIDInput.text; // guarda el nombre de usuario actual
 
-                SupabaseManager.CurrentUserId = usuario.id;  // Guardar el id del usuario actual
+                SupabaseManager.CurrentUserId = usuario.id;  // guardar el id del usuario actual
 
                 ShowSuccessPanel();
             }
@@ -96,7 +94,7 @@ public class SupabaseManager : MonoBehaviour
         return;
     }
 
-    // Verificar si el nombre de usuario ya existe
+    // verifica si el nombre de usuario ya existe
     var usuarioExistente = await clientSupabase
         .From<usuarios>()
         .Select("username")
@@ -110,7 +108,7 @@ public class SupabaseManager : MonoBehaviour
         return;
     }
 
-    // Consultar el último id utilizado (ID = index)
+    // consultar el último id utilizado (ID = index)
     var ultimoId = await clientSupabase
         .From<usuarios>()
         .Select("id")
@@ -121,10 +119,10 @@ public class SupabaseManager : MonoBehaviour
 
     if (ultimoId.Models.Count > 0)
     {
-        nuevoId = ultimoId.Models[0].id + 1; // Incrementar el último id
+        nuevoId = ultimoId.Models[0].id + 1; // incrementar el último id
     }
 
-    // Crear el nuevo usuario con el nuevo id
+    // crear el nuevo usuario con el nuevo id
     var nuevoUsuario = new usuarios
     {
         id = nuevoId,
@@ -133,18 +131,18 @@ public class SupabaseManager : MonoBehaviour
         password = _userPassInput.text,
     };
 
-    // Insertar el nuevo usuario
+    // inserta el nuevo usuario
     var resultado = await clientSupabase
         .From<usuarios>()
         .Insert(new[] { nuevoUsuario });
 
-    // Verifico el estado de la inserción 
+    // verifico el estado de la inserción 
     if (resultado.ResponseMessage.IsSuccessStatusCode)
     {
         _stateText.text = "SIGN UP SUCCESSFUL";
         _stateText.color = Color.green;
-        SupabaseManager.CurrentUsername = _userIDInput.text; // Guardar el nombre de usuario actual
-        SupabaseManager.CurrentUserId = nuevoId;  // Guardar el id del usuario actual
+        SupabaseManager.CurrentUsername = _userIDInput.text; // guarda el nombre de usuario actual
+        SupabaseManager.CurrentUserId = nuevoId;  // guarda el id del usuario actual
         ShowSuccessPanel();
     }
     else
@@ -159,13 +157,12 @@ public class SupabaseManager : MonoBehaviour
 
     private void ShowSuccessPanel()
     {
-        successPanel.SetActive(true); // Mostrar el panel de éxito
+        successPanel.SetActive(true); // muestra el panel de éxito
     }
 
    public void OnPlayButtonClick()
     {
-        // Aquí puedes cargar la escena del juego o realizar cualquier acción que desees
-        SceneManager.LoadScene("TriviaSelectScene"); // Asegúrate de tener una escena llamada "GameScene"
+        SceneManager.LoadScene("TriviaSelectScene"); 
     }
 
   public void ChangeScene(string name)
