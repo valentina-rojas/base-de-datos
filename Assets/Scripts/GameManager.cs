@@ -20,11 +20,15 @@ public class GameManager : MonoBehaviour
     public int _points;
     private static int _totalPoints = 0;
     public int _numQuestionAnswered = 0;
+    public int respuestasCorrectas;
+    public int respuestasIncorrectas;
+
 
     public float initialTimerValue = 10f;
     public float timer;
     public float answerTime;
     private float _timeLeft;
+    public float tiempoJuego;
 
     string _correctAnswer;
 
@@ -67,6 +71,9 @@ public class GameManager : MonoBehaviour
         queryCalled = false;
         timer = initialTimerValue;
         _points = 0;
+        respuestasCorrectas = 0;
+        respuestasIncorrectas = 0;
+        tiempoJuego = 0f;
     }
 
     void StartTrivia()
@@ -150,6 +157,11 @@ public class GameManager : MonoBehaviour
     public void EndGame()
     {
         Debug.Log("Juego terminado. Puntos totales: " + _totalPoints);
+         
+         // Convertir tiempoJuego a entero
+        int tiempoJuegoFinal = Mathf.RoundToInt(tiempoJuego);
+
+        Debug.Log("Tiempo total de juego: " + tiempoJuegoFinal + " segundos.");
 
         // obtener el id del usuario actualmente logueado desde SupabaseManager
         int userId = SupabaseManager.CurrentUserId;
@@ -160,8 +172,12 @@ public class GameManager : MonoBehaviour
         // obtener el puntaje final
         int puntajeFinal = _totalPoints;
 
-        // llama al método para guardar el intento en Supabase
-        GuardarIntentoEnSupabase(userId, categoryId, puntajeFinal);
+        int correctas = respuestasCorrectas;
+
+        int incorrectas = respuestasIncorrectas;
+
+         // llama al método para guardar el intento en Supabase
+        GuardarIntentoEnSupabase(userId, categoryId, puntajeFinal, tiempoJuegoFinal, correctas, incorrectas);
 
         UIManagment.Instance.ResultsScene();
     }
@@ -173,11 +189,8 @@ public class GameManager : MonoBehaviour
     }
 
 
-
-    public async void GuardarIntentoEnSupabase(int userId, int categoryId, int puntajeFinal)
+     public async void GuardarIntentoEnSupabase(int userId, int categoryId, int puntajeFinal, int tiempoJuegoFinal, int correctas, int incorrectas)
     {
-
-
         // consulta el último id utilizado (ID = index)
         var ultimoId = await clientSupabase
             .From<intentos>()
@@ -198,7 +211,10 @@ public class GameManager : MonoBehaviour
             id = nuevoId,
             id_usuario = userId,
             id_category = categoryId,
-            puntaje = puntajeFinal
+            puntaje = puntajeFinal,
+            tiempoJuego = tiempoJuegoFinal,
+            respCorrectas = correctas,
+            respIncorrectas = incorrectas
         };
 
         // insertar el nuevo intento en Supabase

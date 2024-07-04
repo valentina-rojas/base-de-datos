@@ -14,4 +14,14 @@ public class intentos : BaseModel
 
     [Column("puntaje")]
     public int puntaje { get; set; }
+
+    [Column("tiempoJuego")]
+    public int tiempoJuego { get; set; }
+
+    [Column("respCorrectas")]
+    public int respCorrectas { get; set; }
+
+    [Column("respIncorrectas")]
+    public int respIncorrectas { get; set; }
+
 }

@@ -73,6 +73,7 @@ public class UIManagment : MonoBehaviour
 
         GameManager.Instance.CategoryAndQuestionQuery(queryCalled);
 
+        GameManager.Instance.tiempoJuego += Time.deltaTime;
     }
 
 
@@ -88,7 +89,7 @@ public class UIManagment : MonoBehaviour
             }
            
            // _timerText.text = GameManager.Instance.timer.ToString("f0"); // Update timer text
-_timerText.text = "Tiempo: " + GameManager.Instance.timer.ToString("f0");
+            _timerText.text = "Tiempo: " + GameManager.Instance.timer.ToString("f0");
         }
     }
 
@@ -132,17 +133,24 @@ _timerText.text = "Tiempo: " + GameManager.Instance.timer.ToString("f0");
             RespuestaCorrecta();
 
             ChangeButtonColor(buttonIndex, Color.green);
-            // Invoke("RestoreButtonColor", 2f);
+          
             GameManager.Instance._answers.Clear();
-            // Invoke("NextAnswer", 2f);
-
+            
         }
         else
         {
             Debug.Log("Respuesta incorrecta. Int�ntalo de nuevo.");
- _timerActive = false; // Detener el temporizador
+           // _timerActive = false; // Detener el temporizador
+
+            // Detener el temporizador si está activo
+        if (_timerActive)
+        {
+            _timerActive = false; // Detener el temporizador
+            GameManager.Instance.respuestasIncorrectas += 1;
+            print("RESP INCORRECTAS " + GameManager.Instance.respuestasIncorrectas);
+        }
             ChangeButtonColor(buttonIndex, Color.red);
-            // Invoke("RestoreButtonColor", 2f);
+
         }
     }
 
@@ -159,7 +167,6 @@ _timerText.text = "Tiempo: " + GameManager.Instance.timer.ToString("f0");
         }
 
     }
-
 
     private void ChangeButtonColor(int buttonIndex, Color color)
     {
@@ -234,6 +241,10 @@ _timerText.text = "Tiempo: " + GameManager.Instance.timer.ToString("f0");
 
             // Actualizar el texto de puntos en la interfaz de usuario
             _pointsText.text = "Puntos: " + GameManager.Instance.GetTotalPoints();
+
+            GameManager.Instance.respuestasCorrectas += 1;
+
+            print("RESP CORRECTAS " + GameManager.Instance.respuestasCorrectas);
         }
         else
         {
@@ -241,3 +252,4 @@ _timerText.text = "Tiempo: " + GameManager.Instance.timer.ToString("f0");
         }
     }
 }
+
